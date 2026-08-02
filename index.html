@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>MeshCom Map</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f6f7f9;
+        --fg: #1c1f23;
+        --muted: #5c646d;
+        --accent: #2563eb;
+        --card: #ffffff;
+        --border: #dfe3e8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #14171a;
+          --fg: #e8eaed;
+          --muted: #9aa3ad;
+          --accent: #6b9bff;
+          --card: #1d2126;
+          --border: #2c323a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          16px/1.55 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+      main {
+        width: 100%;
+        max-width: 30rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 2rem 1.75rem;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.35rem;
+        letter-spacing: -0.01em;
+      }
+      .sub {
+        margin: 0 0 1.5rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .status {
+        margin: 0 0 1rem;
+        min-height: 1.55em;
+      }
+      .status.error {
+        color: #c0392b;
+      }
+      @media (prefers-color-scheme: dark) {
+        .status.error {
+          color: #ff8a80;
+        }
+      }
+      .spinner {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin: 0 auto 1rem;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      .spinner[hidden] {
+        display: none;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .spinner {
+          animation: none;
+        }
+      }
+      a {
+        color: var(--accent);
+        word-break: break-all;
+      }
+      .note {
+        margin: 1.5rem 0 0;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>MeshCom Map</h1>
+      <p class="sub">Amateur-radio LoRa mesh, live</p>
+
+      <div class="spinner" id="spinner" aria-hidden="true"></div>
+      <p class="status" id="status" role="status">
+        Looking up the current address...
+      </p>
+      <a id="link" href="#" hidden>Continue manually</a>
+
+      <noscript>
+        <p class="status error">
+          This page needs JavaScript to look up the map's current address.
+        </p>
+        <p>
+          <a href="/url.json">Open url.json</a> and use the address it contains.
+        </p>
+      </noscript>
+
+      <p class="note">
+        The map is served through a Cloudflare quick tunnel whose address
+        changes every time the tunnel restarts. This page always forwards you to
+        the current one.
+      </p>
+    </main>
+
+    <script>
+      /*
+       * Reads the current tunnel address from url.json and forwards there.
+       *
+       * Why a separate JSON file instead of baking the address into this page:
+       * GitHub Pages serves HTML with Cache-Control: max-age=600, so a visitor
+       * could sit on a stale address for up to ten minutes after a rotation.
+       * This file therefore never changes; only url.json does, and it is
+       * fetched with cache-busting so a rotation is visible within seconds of
+       * the Pages build.
+       *
+       * 404.html is a byte-identical copy, so deep links such as /wxmap are
+       * forwarded with their path intact.
+       */
+      (function () {
+        var PAGES_REPO_BASE = "/map"; // only used when served from dk5en.github.io
+        var TUNNEL_RE = /^https:\/\/[a-z0-9-]+\.trycloudflare\.com\/?$/;
+
+        var statusEl = document.getElementById("status");
+        var linkEl = document.getElementById("link");
+        var spinnerEl = document.getElementById("spinner");
+
+        function base() {
+          return /\.github\.io$/.test(location.hostname) ? PAGES_REPO_BASE : "";
+        }
+
+        function fail(message) {
+          spinnerEl.hidden = true;
+          statusEl.textContent = message;
+          statusEl.className = "status error";
+        }
+
+        function forward(target) {
+          var prefix = base();
+          var path = location.pathname;
+          if (prefix && path.indexOf(prefix) === 0)
+            path = path.slice(prefix.length);
+          if (path.charAt(0) !== "/") path = "/" + path;
+
+          var dest =
+            target.replace(/\/+$/, "") + path + location.search + location.hash;
+          linkEl.href = dest;
+          linkEl.textContent = dest;
+          linkEl.hidden = false;
+          location.replace(dest);
+        }
+
+        fetch(base() + "/url.json?cb=" + Date.now(), { cache: "no-store" })
+          .then(function (response) {
+            if (!response.ok)
+              throw new Error("url.json returned HTTP " + response.status);
+            return response.json();
+          })
+          .then(function (data) {
+            // Re-validate client-side: the address is written by an automated
+            // job, and nothing downstream should trust it unchecked.
+            if (
+              !data ||
+              typeof data.url !== "string" ||
+              !TUNNEL_RE.test(data.url)
+            ) {
+              throw new Error("no usable address published");
+            }
+            spinnerEl.hidden = true;
+            statusEl.textContent = "Forwarding you to the live map...";
+            forward(data.url);
+          })
+          .catch(function (error) {
+            fail(
+              error.message +
+                ". The map may be offline - try again in a minute.",
+            );
+          });
+      })();
+    </script>
+  </body>
+</html>
