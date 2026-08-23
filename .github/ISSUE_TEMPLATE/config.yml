@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Live map / Live-Karte"
+    url: https://meshmap.oevsv.at
+    about: "Open the MeshCom Map itself. / Öffnet die MeshCom Map."
+  - name: "User manual / Benutzerhandbuch"
+    url: https://dk5en.github.io/map/
+    about: "Read the user manual before filing an issue. / Benutzerhandbuch vor der Meldung eines Issues lesen."

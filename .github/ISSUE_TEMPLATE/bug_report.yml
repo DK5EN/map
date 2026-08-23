@@ -1,0 +1,80 @@
+name: "Bug report / Fehlerbericht"
+description: "Report something broken or wrong in the MeshCom Map. / Etwas an der MeshCom Map ist kaputt oder falsch."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug in the **MeshCom Map**. This tracker is for the map
+        application itself — not MeshCom firmware, not node removal requests, and not
+        general MeshCom network questions. See the README for details.
+
+        Danke für die Meldung eines Fehlers in der **MeshCom Map**. Dieser Tracker ist für
+        die Karten-Anwendung selbst gedacht — nicht für MeshCom-Firmware, nicht für
+        Node-Entfernungswünsche und nicht für allgemeine MeshCom-Netzwerkfragen. Details
+        siehe README.
+
+  - type: input
+    id: callsigns
+    attributes:
+      label: "Callsign(s) affected / Betroffene Rufzeichen"
+      description: "Optional. Which station(s) does this involve? / Optional. Welche Station(en) sind betroffen?"
+      placeholder: "e.g. DK5EN-9"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: tab
+    attributes:
+      label: "Which tab? / Welcher Tab?"
+      options:
+        - Map
+        - Connections
+        - Messages
+        - WX
+        - WX Map
+        - Admin
+        - Node profile
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: "What happened? / Was ist passiert?"
+      description: "Describe what you saw. / Beschreibe, was du gesehen hast."
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-expected
+    attributes:
+      label: "What did you expect? / Was hast du erwartet?"
+    validations:
+      required: true
+
+  - type: input
+    id: when
+    attributes:
+      label: "When did it happen, incl. timezone / Wann ist es passiert, inkl. Zeitzone"
+      placeholder: "e.g. 2026-08-23 14:30 CEST"
+    validations:
+      required: false
+
+  - type: input
+    id: browser-device
+    attributes:
+      label: "Browser and device / Browser und Gerät"
+      placeholder: "e.g. Chrome 128 on desktop / Safari on iPhone"
+    validations:
+      required: false
+
+  - type: textarea
+    id: link-or-screenshot
+    attributes:
+      label: "Deep link or screenshot / Deep-Link oder Screenshot"
+      description: "A deep link (https://meshmap.oevsv.at/?focus=CALLSIGN) or a pasted screenshot helps a lot. / Ein Deep-Link (https://meshmap.oevsv.at/?focus=CALLSIGN) oder ein eingefügter Screenshot hilft sehr."
+    validations:
+      required: false

@@ -1,0 +1,56 @@
+name: "Feature request / Feature-Vorschlag"
+description: "Suggest an improvement or new idea for the MeshCom Map. / Schlage eine Verbesserung oder neue Idee für die MeshCom Map vor."
+title: "[Idea]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an idea for the **MeshCom Map**. This tracker is for the map
+        application itself — not MeshCom firmware and not general MeshCom network features.
+        See the README for details.
+
+        Danke für deine Idee zur **MeshCom Map**. Dieser Tracker ist für die
+        Karten-Anwendung selbst gedacht — nicht für MeshCom-Firmware und nicht für
+        allgemeine MeshCom-Netzwerk-Features. Details siehe README.
+
+  - type: dropdown
+    id: tab
+    attributes:
+      label: "Which tab / area? / Welcher Tab / Bereich?"
+      options:
+        - Map
+        - Connections
+        - Messages
+        - WX
+        - WX Map
+        - Admin
+        - Node profile
+        - New idea
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What problem would this solve? / Welches Problem würde das lösen?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: "How do you imagine it? / Wie stellst du es dir vor?"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: "How often would you use it? / Wie oft würdest du es nutzen?"
+      options:
+        - daily / täglich
+        - weekly / wöchentlich
+        - occasionally / gelegentlich
+    validations:
+      required: false

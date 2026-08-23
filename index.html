@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="The user manual for the MeshCom Map, an amateur-radio LoRa mesh visualization. / Das Benutzerhandbuch zur MeshCom Map."
+    />
+    <title>MeshCom Map — User Manual</title>
+    <script>
+      // Pre-paint theme bootstrap: read the persisted choice synchronously so
+      // there is no flash of the wrong theme before guide.js runs. Falls
+      // through to prefers-color-scheme (handled entirely in CSS) when
+      // nothing is stored, i.e. the "system" state sets no attribute.
+      (function () {
+        try {
+          var t = window.localStorage.getItem("guide:theme");
+          if (t === "light" || t === "dark") {
+            document.documentElement.setAttribute("data-theme", t);
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="assets/guide.css" />
+  </head>
+  <body>
+    <a id="skip-link" class="skip-link" href="#main-content"
+      >Skip to content / Zum Inhalt springen</a
+    >
+    <div id="app">
+      <noscript>
+        <div class="noscript-banner">
+          This user manual needs JavaScript to render. Visit the live map or the
+          source repository directly:
+          <a href="https://meshmap.oevsv.at">meshmap.oevsv.at</a> ·
+          <a href="https://github.com/DK5EN/map">github.com/DK5EN/map</a>
+        </div>
+      </noscript>
+    </div>
+    <script src="assets/content.en.js"></script>
+    <script src="assets/content.de.js"></script>
+    <script src="assets/guide.js"></script>
+  </body>
+</html>
