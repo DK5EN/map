@@ -626,7 +626,7 @@ window.GUIDE.en = {
         },
         {
           h: "No accusation",
-          p: "A position that fits none of a node's radio neighbours is withheld and listed under Admin as a “position suspect”. That says the data does not fit together, not why. The node card then reads “No position on record for this node.”",
+          p: "A position that fits none of a node's radio neighbours is withheld and listed under Admin as a “position suspect”. That says the data does not fit together, not why. The node card then reads “No position shown. None was received, or the reported one is not displayed.”",
         },
         {
           h: "The data comes from the nodes",

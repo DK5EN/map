@@ -643,7 +643,7 @@ window.GUIDE.de = {
         },
         {
           h: "Keine Anschuldigung",
-          p: "Eine Position, die zu keinem Funknachbarn passt, hält die Karte zurück und führt sie unter Admin bei den „Positionsverdächtigen“. Das sagt, dass die Daten nicht zusammenpassen, nicht warum. Auf der Knotenkarte steht dann „Für diesen Knoten ist keine Position erfasst.“",
+          p: "Eine Position, die zu keinem Funknachbarn passt, hält die Karte zurück und führt sie unter Admin bei den „Positionsverdächtigen“. Das sagt, dass die Daten nicht zusammenpassen, nicht warum. Auf der Knotenkarte steht dann „Keine Position angezeigt. Es wurde keine empfangen, oder die gemeldete wird nicht angezeigt.“",
         },
         {
           h: "Die Daten kommen von den Knoten",
