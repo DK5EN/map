@@ -8,7 +8,7 @@ window.GUIDE.de = {
       "MeshCom Map ist eine Webkarte für das MeshCom-Amateurfunk-LoRa-Mesh. Die offiziellen Dashboards stellen HTML-Tabellen dar; diese Karte fügt Verbindungsqualität aus dem gemessenen Signal, Telemetriediagramme, Wetter-Overlays und einen Live-Feed hinzu. Alles darauf leitet sich davon ab, was das Mesh-Netzwerk selbst ausstrahlt. Dieses Handbuch geht jeden Reiter durch und erklärt die Teile, die man leicht übersieht.",
     liveUrl: "https://meshmap.oevsv.at",
     issuesUrl: "https://github.com/DK5EN/map/issues",
-    updated: "2026-08-23",
+    updated: "2026-11-05",
     stats: [
       { value: "1.434", label: "Knoten" },
       { value: "910", label: "Gateways" },
@@ -114,8 +114,8 @@ window.GUIDE.de = {
       },
       points: [
         {
-          h: "Farbe bedeutet Signalqualität, nicht Entfernung",
-          p: "Eine Verbindungslinie wird nach ihrem Signal-Rausch-Abstand eingefärbt. Grün ist eine komfortable Verbindung, Rot eine, die kaum noch funktioniert. Grenzwertige und schlechte Verbindungen werden absichtlich **über** guten gezeichnet, damit ein Problem nie unter einer gesunden Linie verschwindet.",
+          h: "Farbe bedeutet SNR, nicht Entfernung",
+          p: "Eine Verbindungslinie wird nach festen Schwellen ihres Signal-Rausch-Abstands eingefärbt. Die Farbe beschreibt den Messwert, nicht die Station. Schwache Werte werden absichtlich **über** starken gezeichnet, damit sie nicht unter ihnen verschwinden.",
         },
         {
           h: "Zwei Arten von Stationen",
@@ -124,6 +124,10 @@ window.GUIDE.de = {
         {
           h: "Durchgezogen heißt direkt, gestrichelt heißt weitergeleitet",
           p: "Eine durchgezogene Linie bedeutet, dass ein Funkgerät ein anderes direkt hört. Eine gestrichelte Linie ist über mindestens einen Relay-Knoten dazwischen gelaufen.",
+        },
+        {
+          h: "Eine Linie zeigt eine Messung",
+          p: "Die Karte zeichnet je Paar eine Linie. Farbe und Popup zeigen den letzten Messwert einer Richtung, höchstens 3 Stunden alt. Welche der beiden das ist, folgt keiner festen Regel; das Popup nennt sie als „A → B“. Die andere Richtung steht unter Verbindungen.",
         },
         {
           h: "Verbindungen enden bei 300 km",
@@ -136,18 +140,26 @@ window.GUIDE.de = {
       ],
       details: [
         {
-          summary: "Die genaue Signalqualitäts-Skala",
+          summary: "Die genaue SNR-Skala",
           type: "table",
-          head: ["Farbe", "SNR", "Bewertung"],
+          head: ["Farbe", "SNR", "Wort in der App, Bedeutung"],
           rows: [
-            ["Grün", "≥ −12 dB", "Gut — solide Reserve"],
-            ["Gelb", "−12 bis −16 dB", "OK — funktioniert, weniger Reserve"],
+            [
+              "Grün",
+              "≥ −12 dB",
+              "Gut: deutlich über der typischen Grenze von −17,5 dB",
+            ],
+            ["Gelb", "−12 bis −16 dB", "OK: noch über der typischen Grenze"],
             [
               "Orange",
               "−16 bis −20 dB",
-              "Grenzwertig — verliert Pakete, sobald sich die Bedingungen verschlechtern",
+              "Grenzwertig: um die typische Grenze, Frames gehen zunehmend verloren",
             ],
-            ["Rot", "< −20 dB", "Schlecht — an der Grenze der Dekodierbarkeit"],
+            [
+              "Rot",
+              "< −20 dB",
+              "Schlecht: unter der typischen Grenze, nur einzelne Frames kommen an",
+            ],
             [
               "Grau",
               "kein Messwert",
@@ -221,7 +233,7 @@ window.GUIDE.de = {
         },
         {
           h: "Qualität gehört zu einer Verbindung, nie zu einer Station",
-          p: "Es gibt keine einzelne „Qualität“-Kennzahl für einen Knoten. Eine Station kann einen ausgezeichneten Nachbarn und einen miserablen haben, und der Durchschnitt daraus würde nichts aussagen. Jeder Messwert hier gehört zu genau einem bestimmten Paar.",
+          p: "Es gibt keine einzelne „Qualität“-Kennzahl für einen Knoten. Eine Station kann einen starken Nachbarn und einen schwachen haben, und der Durchschnitt daraus würde nichts aussagen. Jeder Messwert hier gehört zu genau einem bestimmten Paar.",
         },
         {
           h: "Messwerte gelten nur in eine Richtung",
@@ -395,7 +407,7 @@ window.GUIDE.de = {
         {
           summary: "Die Ampel an einer Wetterstation",
           type: "prose",
-          text: "Jede Station wird danach beurteilt, ob ihre Messwerte für die flächendeckende Karte vertrauenswürdig sind. **Grün** heißt: sie fließt ein. **Gelb** heißt: sie wird beobachtet, zählt aber noch. **Grau** heißt: es reicht noch nicht für ein Urteil — entweder kein Sensor, oder weniger als zwei Tage Daten. **Rot** heißt: sie ist derzeit ausgeschlossen. Eine Station muss sich rund zwei Tage lang durchgehend auffällig verhalten, um auf Rot zu springen, und sich rund zwei Tage lang unauffällig verhalten, um zurückzukehren — so flackert sie nicht bei jedem Wetterumschwung.",
+          text: "Für jede Station wird eingestuft, ob ihre Messwerte für die flächendeckende Karte vertrauenswürdig sind. **Grün** heißt: sie fließt ein. **Gelb** heißt: sie wird beobachtet, zählt aber noch. **Grau** heißt: es reicht noch nicht für eine Einstufung — entweder kein Sensor, oder weniger als zwei Tage Daten. **Rot** heißt: sie ist derzeit ausgeschlossen. Eine Station muss sich rund zwei Tage lang durchgehend auffällig verhalten, um auf Rot zu springen, und sich rund zwei Tage lang unauffällig verhalten, um zurückzukehren — so flackert sie nicht bei jedem Wetterumschwung.",
         },
         {
           summary: "Was eine Station markiert",
@@ -476,11 +488,11 @@ window.GUIDE.de = {
         {
           summary: "Die Farbskala der Abdeckung",
           type: "table",
-          head: ["Farbe", "Empfangssignal", "Bewertung"],
+          head: ["Farbe", "Empfangssignal", "Bedeutung"],
           rows: [
-            ["Gelb", "etwa −90 dBm", "Stark — komfortable Reserve"],
-            ["Grün", "etwa −105 dBm", "Solide"],
-            ["Blaugrün", "etwa −115 dBm", "Brauchbar"],
+            ["Gelb", "etwa −90 dBm", "Stark"],
+            ["Grün", "etwa −105 dBm", "Mittel"],
+            ["Blaugrün", "etwa −115 dBm", "Schwach"],
             ["Dunkellila", "etwa −130 dBm", "An der Rauschgrenze"],
             [
               "Leer",
@@ -612,6 +624,73 @@ window.GUIDE.de = {
     },
 
     {
+      id: "limits",
+      nav: "Grenzen",
+      title: "Die Karte zeigt, was gemessen wurde, und sagt nicht, warum",
+      lead: "Sie zeigt Messwerte der Knoten und daraus berechnete Größen. Warum ein Wert so ist, weiß sie meist nicht, und sie urteilt nicht über Stationen oder Betreiber.",
+      points: [
+        {
+          h: "Messwerte und Berechnetes",
+          p: "Die Karte zeigt, was die Knoten melden, und berechnet daraus weitere Größen, etwa das Wetterfeld, den QNH oder den Gateway-Status. Nicht jede berechnete Größe ist heute als solche gekennzeichnet.",
+        },
+        {
+          h: "Kein Urteil über Stationen",
+          p: "Die Karte bewertet keine Station und keinen Betreiber, denn dazu müsste sie alle Umstände kennen. Farben und die Wörter Gut, OK, Grenzwertig und Schlecht beschreiben den SNR-Wert einer Strecke nach festen Schwellen, nicht die Station.",
+        },
+        {
+          h: "Einstufungen betreffen Daten",
+          p: "Die Wetter-Ampel entscheidet, ob eine Station in das Wetterfeld einfließt. Die Admin-Listen nennen etwa unplausible Batteriewerte. Der Gateway-Status beschreibt, wie lange laut MeshCom-Server nichts mehr vom Gateway kam.",
+        },
+        {
+          h: "Keine Anschuldigung",
+          p: "Eine Position, die zu keinem Funknachbarn passt, hält die Karte zurück und führt sie unter Admin bei den „Positionsverdächtigen“. Das sagt, dass die Daten nicht zusammenpassen, nicht warum. Auf der Knotenkarte steht dann „Für diesen Knoten ist keine Position erfasst.“",
+        },
+        {
+          h: "Die Daten kommen von den Knoten",
+          p: "Rund drei Viertel der Verbindungsmesswerte stammen aus HEY-Paketen, rund ein Viertel aus Positionsmeldungen (Woche bis 05.11.2026). Was die Karte zeigt, hängt damit auch vom Firmware-Stand der Knoten ab.",
+        },
+        {
+          h: "Eine Messung entsteht nur durch Weiterleiten oder Hochladen",
+          p: "Ein Knoten hört vieles, das nie beim Server ankommt. Fehlt eine Verbindung, kann sie trotzdem bestehen. Die Zahl der Messungen hängt davon ab, wie oft der Sender sendet, was der Empfänger weiterleitet und was den Server erreicht. Sie sagt wenig über den Funk.",
+        },
+        {
+          h: "Jede Richtung ist eine eigene Messung",
+          p: "„B hört A“ misst das Funkgerät von B. Bei 62 % der Paare liegt nur eine Richtung vor (Woche bis 05.11.2026). Eine fehlende Richtung heißt nicht, dass dort nichts ankommt.",
+        },
+        {
+          h: "LoRa hat eine Grenze, keine Skala",
+          p: "Ein einzelner Frame kommt ganz oder gar nicht an. Beim Spreizfaktor SF11 des Standardprofils nennt das Datenblatt −17,5 dB als typische Grenze. In unseren Daten kommen Frames bis rund −19 dB noch durch, bei −20 dB kaum noch. Wie scharf der Übergang ist, zeigen sie nicht. Weit darüber ändert ein höherer SNR wenig.",
+        },
+      ],
+      details: [
+        {
+          summary: "Warum Werte nicht direkt vergleichbar sind",
+          type: "list",
+          items: [
+            "**Firmware:** Das Meldeformat und die Upload-Regeln haben sich mit den Versionen geändert. Stände vor 4.35n melden anders als 4.40a, und erst ab 4.40a.10.30 nennt der Upload den empfangenden Gateway.",
+            "**Funkchip und Treiber:** SX126x und SX127x messen RSSI verschieden, und auf SX126x melden ESP32 und nRF52 verschiedene Größen. SNR endet bei SX126x bei rund +8 dB, bei SX127x bei rund +14 dB. Vergleichen sollte man nur innerhalb einer Bauart.",
+            "**Sendeleistung, Antenne und Zuleitung:** Sie unterscheiden sich von Station zu Station und stehen nicht im Datenstrom. Die Karte kennt keinen dieser Werte.",
+            "**Rauschen am Standort:** Der Abstand zwischen Signal und Rauschen hängt vom Empfänger und seinem Umfeld ab. Bei Empfängern mit ESP32 und SX126x liegt der aus den Messwerten errechnete Rauschboden meist zwischen −112 und −102 dBm, und auch die Platine verschiebt ihn.",
+          ],
+        },
+        {
+          summary: "Was unterwegs verloren geht",
+          type: "list",
+          items: [
+            "**Nur durchgekommene Frames haben einen Messwert:** Ein verlorener Frame hinterlässt keine Zahl. Der SNR einer schwachen Strecke zeigt also die Frames, die es geschafft haben.",
+            "**Störungen:** Der Standardkanal 433,175 MHz liegt im 70-cm-Band und im ISM-Bereich 433,05 bis 434,79 MHz, den sich viele Sender teilen. Fremde Signale heben das Rauschen und senken die Empfangswahrscheinlichkeit.",
+            "**Kollisionen:** Senden zwei Knoten gleichzeitig, kann beides verloren gehen. Die Firmware lauscht vor dem Senden und wartet zufällig. Zwei Knoten, die sich nicht hören, kann das aber nicht trennen (Hidden Node).",
+            "**Übersteuerung:** Ein sehr naher starker Sender kann die Eingangsstufe eines Knotens zustopfen, er hört dann schlecht oder gar nichts. Auch Firmware- oder Chip-Zustände können einen Knoten zeitweise taub machen. In den Daten der Karte ist das nicht zu erkennen.",
+            "**Selektives Weiterleiten und Deduplizierung:** Nicht jeder Frame wird weitergeleitet, und die Firmware, der MeshCom-Server und MeshMap verwerfen Kopien. Das Bild wird dadurch unvollständig, die Messwerte selbst ändert es nicht.",
+          ],
+        },
+      ],
+      callout: {
+        type: "note",
+        text: "Auch diese Karte hat Fehler. Gemeldete Fehler beheben wir meist binnen Tagen; einzelne stellen wir bewusst zurück, wenn die richtige Regel noch nicht klar ist.",
+      },
+    },
+    {
       id: "tech",
       nav: "Dahinter",
       title: "Wie es gebaut ist",
@@ -702,7 +781,7 @@ window.GUIDE.de = {
     },
     {
       term: "HEY",
-      def: "Die Aussendung, mit der sich eine Station ankündigt. Jede Station, die sie weiterleitet, fügt ihren eigenen Messwert hinzu, wie gut sie sie empfangen hat. Von hier stammen fast alle Verbindungsdaten dieser Karte.",
+      def: "Die Aussendung, mit der sich eine Station ankündigt. Jede Station, die sie weiterleitet, fügt ihren eigenen Messwert hinzu, wie gut sie sie empfangen hat. Von hier stammen rund drei Viertel der Verbindungsmesswerte, der Rest vor allem aus Positionsmeldungen.",
     },
     {
       term: "PATH",
@@ -714,11 +793,11 @@ window.GUIDE.de = {
     },
     {
       term: "SNR",
-      def: "Signal-Rausch-Abstand in dB — wie weit das Signal über dem Rauschen liegt. Das wichtigste Qualitätsmaß für Verbindungen hier. Höher ist besser; LoRa dekodiert noch weit unter null.",
+      def: "Signal-Rausch-Abstand in dB — wie weit das Signal über dem Rauschen liegt. Das wichtigste Maß für Verbindungen hier. LoRa dekodiert noch weit unter null, bei SF11 typisch bis −17,5 dB.",
     },
     {
       term: "RSSI",
-      def: "Empfangsfeldstärke in dBm — wie viel Energie ankam. Immer negativ; näher an null bedeutet stärker. Sie sagt, wie laut, während SNR sagt, wie klar.",
+      def: "Empfangsfeldstärke in dBm — wie viel Energie ankam. Immer negativ; näher an null bedeutet stärker. Sie sagt, wie laut, während SNR sagt, wie klar. Je nach Funkchip und Treiber ist sie eine andere Größe.",
     },
     {
       term: "QFE",

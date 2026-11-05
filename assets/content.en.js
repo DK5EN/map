@@ -8,7 +8,7 @@ window.GUIDE.en = {
       "MeshCom Map is a web map for the MeshCom amateur-radio LoRa mesh. The official dashboards render HTML tables; this one adds link quality from the measured signal, telemetry charts, weather overlays and a live feed. Everything on it is derived from what the mesh itself broadcasts. This manual walks through every tab and explains the parts that are easy to miss.",
     liveUrl: "https://meshmap.oevsv.at",
     issuesUrl: "https://github.com/DK5EN/map/issues",
-    updated: "2026-08-23",
+    updated: "2026-11-05",
     stats: [
       { value: "1,434", label: "nodes" },
       { value: "910", label: "gateways" },
@@ -114,8 +114,8 @@ window.GUIDE.en = {
       },
       points: [
         {
-          h: "Colour is signal quality, not distance",
-          p: "A link line is coloured by its signal-to-noise ratio. Green is a comfortable link, red is one that barely works. Marginal and bad links are deliberately drawn **on top** of good ones, so a problem is never hidden underneath a healthy line.",
+          h: "Colour means SNR, not distance",
+          p: "A link line is coloured against fixed thresholds of its signal-to-noise ratio. The colour describes the reading, not the station. Weak readings are deliberately drawn **on top** of strong ones, so they do not disappear underneath them.",
         },
         {
           h: "Two kinds of station",
@@ -124,6 +124,10 @@ window.GUIDE.en = {
         {
           h: "Solid means direct, dashed means relayed",
           p: "A solid line is one radio hearing another directly. A dashed line went through at least one relay in between.",
+        },
+        {
+          h: "A line shows one reading",
+          p: "The map draws one line per pair. Its colour and popup show the latest reading of one direction, at most 3 hours old. Which of the two it is follows no fixed rule; the popup names it as “A → B”. The other direction is under Connections.",
         },
         {
           h: "Links stop at 300 km",
@@ -136,18 +140,26 @@ window.GUIDE.en = {
       ],
       details: [
         {
-          summary: "The exact signal-quality scale",
+          summary: "The exact SNR scale",
           type: "table",
-          head: ["Colour", "SNR", "Reading"],
+          head: ["Colour", "SNR", "Word in the app, meaning"],
           rows: [
-            ["Green", "≥ −12 dB", "Good — solid margin"],
-            ["Yellow", "−12 to −16 dB", "OK — works, less headroom"],
+            [
+              "Green",
+              "≥ −12 dB",
+              "Good: well above the typical limit of −17.5 dB",
+            ],
+            ["Yellow", "−12 to −16 dB", "OK: still above the typical limit"],
             [
               "Orange",
               "−16 to −20 dB",
-              "Marginal — drops packets when conditions worsen",
+              "Marginal: around the typical limit, more and more frames are lost",
             ],
-            ["Red", "< −20 dB", "Bad — at the edge of decodable"],
+            [
+              "Red",
+              "< −20 dB",
+              "Bad: below the typical limit, only single frames get through",
+            ],
             [
               "Grey",
               "no reading",
@@ -224,7 +236,7 @@ window.GUIDE.en = {
         },
         {
           h: "Quality belongs to a link, never to a station",
-          p: 'There is no single "quality" number for a node. A station can have one excellent neighbour and one terrible one, and averaging those would tell you nothing. Every reading here belongs to one specific pair.',
+          p: 'There is no single "quality" number for a node. A station can have one strong neighbour and one weak one, and averaging those would tell you nothing. Every reading here belongs to one specific pair.',
         },
         {
           h: "Readings are one-directional",
@@ -391,7 +403,7 @@ window.GUIDE.en = {
         {
           summary: "The traffic light on a weather station",
           type: "prose",
-          text: "Each station is judged on whether its readings can be trusted for the area-wide map. **Green** means it feeds in. **Yellow** means it is being watched but still counts. **Grey** means there is not enough to judge yet — either no sensor, or less than two days of data. **Red** means it is currently excluded. A station has to misbehave persistently over roughly two days to turn red, and to behave for roughly two days to come back — so it does not flicker every time the weather changes.",
+          text: "For each station the map classifies whether its readings can be trusted for the area-wide map. **Green** means it feeds in. **Yellow** means it is being watched but still counts. **Grey** means there is not enough to classify yet — either no sensor, or less than two days of data. **Red** means it is currently excluded. Readings have to stand out persistently over roughly two days to turn red, and to stay normal for roughly two days to come back — so it does not flicker every time the weather changes.",
         },
         {
           summary: "What gets a station flagged",
@@ -469,11 +481,11 @@ window.GUIDE.en = {
         {
           summary: "The coverage colour scale",
           type: "table",
-          head: ["Colour", "Received signal", "Reading"],
+          head: ["Colour", "Received signal", "Meaning"],
           rows: [
-            ["Yellow", "around −90 dBm", "Strong — comfortable margin"],
-            ["Green", "around −105 dBm", "Solid"],
-            ["Blue-green", "around −115 dBm", "Workable"],
+            ["Yellow", "around −90 dBm", "Strong"],
+            ["Green", "around −105 dBm", "Medium"],
+            ["Blue-green", "around −115 dBm", "Weak"],
             ["Dark purple", "around −130 dBm", "At the noise floor"],
             ["Blank", "no data", "No receiver in range — not a weak signal"],
           ],
@@ -595,6 +607,73 @@ window.GUIDE.en = {
     },
 
     {
+      id: "limits",
+      nav: "Limits",
+      title: "The map shows what was measured, not why",
+      lead: "It shows readings from the nodes and values calculated from them. It mostly does not know why a value is what it is, and it does not judge stations or their operators.",
+      points: [
+        {
+          h: "Readings and calculated values",
+          p: "The map shows what the nodes report and calculates further values from that, such as the weather field, QNH or the gateway status. Not every calculated value is marked as such today.",
+        },
+        {
+          h: "No verdict on stations",
+          p: "The map does not rate any station or operator, because that would take knowing all the circumstances. The colours and the words Good, OK, Marginal and Bad describe the SNR of one link against fixed thresholds, not the station.",
+        },
+        {
+          h: "Classifications concern data",
+          p: "The weather traffic light decides whether a station feeds into the weather field. The Admin lists name things like implausible battery values. The gateway status describes how long the MeshCom server has reported nothing from a gateway.",
+        },
+        {
+          h: "No accusation",
+          p: "A position that fits none of a node's radio neighbours is withheld and listed under Admin as a “position suspect”. That says the data does not fit together, not why. The node card then reads “No position on record for this node.”",
+        },
+        {
+          h: "The data comes from the nodes",
+          p: "About three quarters of the link readings come from HEY packets, about one quarter from position reports (week to 2026-11-05). What the map shows therefore also depends on the firmware the nodes run.",
+        },
+        {
+          h: "A reading only exists if a frame is relayed or uploaded",
+          p: "A node hears a lot that never reaches the server. A missing link can still exist. The number of readings depends on how often the sender transmits, what the receiver relays and what reaches the server. It says little about the radio path.",
+        },
+        {
+          h: "Each direction is its own measurement",
+          p: "“B hears A” is measured by B's radio. For 62 % of pairs only one direction is on record (week to 2026-11-05). A missing direction does not mean nothing arrives there.",
+        },
+        {
+          h: "LoRa has a limit, not a scale",
+          p: "A single frame arrives whole or not at all. At SF11, the spreading factor of the default profile, the datasheet gives −17.5 dB as the typical limit. In our data frames still get through down to about −19 dB, and hardly any at −20 dB. The data does not show how sharp that transition is. Well above it, a higher SNR changes little.",
+        },
+      ],
+      details: [
+        {
+          summary: "Why values are not directly comparable",
+          type: "list",
+          items: [
+            "**Firmware:** The report format and the upload rules have changed between versions. Builds before 4.35n report differently from 4.40a, and only from 4.40a.10.30 does the upload name the receiving gateway.",
+            "**Radio chip and driver:** SX126x and SX127x measure RSSI differently, and on SX126x, ESP32 and nRF52 report different quantities. SNR tops out at about +8 dB on SX126x and about +14 dB on SX127x. Only compare within one type of hardware.",
+            "**Transmit power, antenna and feedline:** These differ from station to station and are not in the data stream. The map knows none of them.",
+            "**Noise at the site:** The distance between signal and noise depends on the receiver and its surroundings. On receivers with ESP32 and SX126x, the noise floor calculated from the readings is mostly between −112 and −102 dBm, and the board shifts it too.",
+          ],
+        },
+        {
+          summary: "What gets lost on the way",
+          type: "list",
+          items: [
+            "**Only frames that got through have a reading:** A lost frame leaves no number. The SNR of a weak link therefore shows the frames that made it.",
+            "**Interference:** The default channel 433.175 MHz lies in the 70 cm band and in the ISM range 433.05 to 434.79 MHz, which many transmitters share. Other signals raise the noise and lower the chance of reception.",
+            "**Collisions:** When two nodes transmit at once, both frames can be lost. The firmware listens before it transmits and waits a random time. That cannot separate two nodes that do not hear each other (hidden node).",
+            "**Receiver overload:** A very close, strong transmitter can overload a node's input stage, so it hears poorly or not at all. Firmware or chip states can also make a node temporarily deaf. None of this can be seen in the map's data.",
+            "**Selective relaying and deduplication:** Not every frame is relayed, and the firmware, the MeshCom server and MeshMap discard copies. That makes the picture incomplete; it does not change the readings themselves.",
+          ],
+        },
+      ],
+      callout: {
+        type: "note",
+        text: "This map has bugs too. Reported bugs are usually fixed within days; a few are deliberately deferred when the right rule is not yet clear.",
+      },
+    },
+    {
       id: "tech",
       nav: "Behind it",
       title: "How it is built",
@@ -682,7 +761,7 @@ window.GUIDE.en = {
     },
     {
       term: "HEY",
-      def: "The beacon a station sends to announce itself. Every station that relays it adds its own measurement of how well it received it. This is where nearly all the link data on this map comes from.",
+      def: "The beacon a station sends to announce itself. Every station that relays it adds its own measurement of how well it received it. About three quarters of the link readings on this map come from here, most of the rest from position reports.",
     },
     {
       term: "PATH",
@@ -694,11 +773,11 @@ window.GUIDE.en = {
     },
     {
       term: "SNR",
-      def: "Signal-to-noise ratio in dB — how far the signal stands above the noise. The main measure of link quality here. Higher is better; LoRa still decodes well below zero.",
+      def: "Signal-to-noise ratio in dB — how far the signal stands above the noise. The main measure for links here. LoRa still decodes well below zero, at SF11 typically down to −17.5 dB.",
     },
     {
       term: "RSSI",
-      def: "Received signal strength in dBm — how much energy arrived. Always negative; closer to zero is stronger. It says how loud, while SNR says how clear.",
+      def: "Received signal strength in dBm — how much energy arrived. Always negative; closer to zero is stronger. It says how loud, while SNR says how clear. Depending on radio chip and driver it is a different quantity.",
     },
     {
       term: "QFE",
